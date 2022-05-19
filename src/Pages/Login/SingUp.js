@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import auth from '../../firebase.init'
 import { useForm } from "react-hook-form";
 import Loading from '../Shared/Loading';
+import useToken from '../../hooks/useToken';
 
 const SingUp = () => {
 
@@ -19,6 +20,8 @@ const SingUp = () => {
 
     const [updateProfile, updating, updateError] = useUpdateProfile(auth);
 
+    const [token] = useToken(user || gUser);
+
     // variable declare kore niba error dekaite chaile 
     let signInError;
     //true die test korte parba
@@ -29,12 +32,15 @@ const SingUp = () => {
         signInError = <p className='text-red-500 '><small>
             {error?.message || gError?.message || updateError?.message}</small></p>
     }
+    if (token) {
+        navigate('/appointment');
+    }
 
     const onSubmit = async data => {
         await createUserWithEmailAndPassword(data.email, data.password);
         await updateProfile({ displayName: data.name });
-        console.log('update done');
-        navigate('/appointment')
+        // console.log('update done'); 
+
     };
     return (
         <div className='flex h-screen justify-center items-center'>
